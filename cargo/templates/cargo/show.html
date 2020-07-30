@@ -1,0 +1,64 @@
+{% extends 'cargo/base.html' %}
+
+{% block main %}
+    {% if errors %}
+        <div class="alert alert-warning">
+            {% for key, error in errors %}
+                {% autoescape off %}
+                    {{ error }}
+                {% endautoescape %}
+            {% endfor %}
+
+        </div>
+    {% endif %}
+    <div class="container mb-4 p-4 ">
+        <h3>Entrer votre numéro de commande</h3>
+        <p>pour suivre l'avancement</p>
+        <form action="{% url 'consulter_commande' %}" method="POST">
+            {% csrf_token %}
+            <div class="form-inline align-items-center">
+                {{  form.reference }}
+                <button type="submit" class="btn btn-secondary" >Envoyer</button>
+            </div>
+        </form>
+    </div>
+    <div class="container-fluid mb-4">
+         {% if commande %}
+{#            <pre> {% filter force_escape%} {% debug%} {% endfilter%} </pre>#}
+            <table class="table">
+            <thead>
+                <tr>
+                    <td>Ref</td>
+                    <td>date</td>
+                    <td>prix</td>
+                    <td>client</td>
+                    <td>pays</td>
+                    <td>etat</td>
+                    <td>action</td>
+                </tr>
+            </thead>
+         {% for com in commande %}
+            <tbody>
+            <tr>
+                <td>{{ com.reference }}</td>
+                <td>{{ com.created_at }}</td>
+                <td>{{ com.price }} &nbsp; Fcfa</td>
+                <td>{{ com.client }}</td>
+                <td>{{ com.pays }}</td>
+                <td>{{ com.terminated }}</td>
+                <td><a href="#">Details</a></td>
+            </tr>
+            </tbody>
+         {% endfor %}
+        </table>
+        {% else %}
+             {% if saisi_utilisateur %}
+                <div class="alert alert-danger">
+                    <h5>"Désolé, aucune commande de correspond au numéro : {{ saisi_utilisateur }}"</h5>
+                </div>
+              {% endif %}
+        {% endif %}
+
+    </div>
+
+{% endblock main %}
